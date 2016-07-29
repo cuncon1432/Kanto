@@ -1,0 +1,60 @@
+name = "SPDEF"
+author = "redskhie"
+description = [[EV Trainer]]
+
+function onStart()
+
+	startime = os.time()
+	
+end
+
+function onPause()
+	log("***"..getPokemonName(1).." EV STATS***")
+	log("-"..getPokemonNature(1).." Nature-")
+	log("Attack: "..getPokemonEffortValue(1, "Attack"))
+	log("Defense: "..getPokemonEffortValue(1, "Defense"))
+	log("Speed: "..getPokemonEffortValue(1, "Speed"))
+	log("Special Attack: "..getPokemonEffortValue(1, "Spattack"))
+	log("Special Defense: "..getPokemonEffortValue(1, "Spdefense"))
+	log("Health Points: "..getPokemonEffortValue(1, "HP"))
+	log(" ")
+	endtime = os.time()
+	log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/3600 ).. " hours")
+	log("or")
+	log(string.format("Bot running time: %.2f", os.difftime(endtime,startime)/60 ).. " minutes")
+	log(" ")
+		
+end
+
+function onPathAction()
+	
+	if isPokemonUsable(1) and getPokemonEffortValue(1, "SPDEF") < 252 then
+		if getMapName() == "Pokecenter Vermilion" then
+			moveToMap("Vermilion City")
+		elseif getMapName() == "Vermilion City" then
+			moveToWater()
+		end
+	
+	else
+		if getMapName() == "Vermilion City" then	
+			moveToMap("Pokecenter Vermilion")
+	    	elseif getMapName() == "Pokecenter Vermilion" then
+			usePokecenter()
+		end
+	end
+end
+
+function onBattleAction()
+	if isWildBattle() and ( isOpponentShiny() ) then	
+		return useItem("Pokeball") or useItem("Great Ball") or useItem("Ultra Ball") or attack() or run()
+	end
+	
+	if getActivePokemonNumber() == 1 and isOpponentEffortValue("SPDEF") and getPokemonEffortValue(1,"SPDEF") < 252 then
+		log("Your "..getPokemonName(1).." have "..getPokemonEffortValue(1, "SPDEF").. " SPDEF EVs.")
+		return attack() or sendPokemon(5) or sendPokemon(6) or run()
+	end
+
+	
+	return run() or sendUsablePokemon() or sendAnyPokemon()
+	
+end
